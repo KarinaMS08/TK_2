@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,6 +56,23 @@ void tampilkanAntrian(struct Konsumen *head) {
         printf("===============================\n");
 }
 
+int validasiNama(char nama[]) {
+  int i;
+  for (i = 0; i < strlen(nama); i++) {
+    if (isalpha(nama[i])) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+void clearScreen() {
+    #if defined(_WIN32) || defined(_WIN64)
+      system("cls");
+    #else
+      system("clear");
+    #endif
+}
 
 int main() {
     struct Konsumen *head = NULL;
@@ -62,6 +80,7 @@ int main() {
     int pilihan;
 
     do {
+        clearScreen();
         printf("\n============================\n");
         printf("\  Program Antrian Konsumen   ");
         printf("\n============================\n");
@@ -72,12 +91,21 @@ int main() {
         printf("4. Keluar\n");
         printf("Pilih menu: ");
         scanf("%d", &pilihan);
+        getchar();
 
         switch (pilihan) {
             case 1: {
                 char nama[50];
                 printf("\nMasukkan nama konsumen: ");
                 scanf(" %[^\n]", nama);
+                getchar();
+
+                while (!validasiNama(nama)) {
+                    printf("Nama tidak valid! Masukkan nama yang benar (Mengandung karakter): ");
+                    scanf(" %[^\n]", nama);
+                    getchar();
+                }
+                
                 tambahAntrian(&head, &tail, nama);
                 printf("Konsumen ditambahkan ke antrian!\n");
                 break;
@@ -99,6 +127,11 @@ int main() {
             default:
                 printf("\nPilihan tidak valid!\n");
         }
+
+        if (pilihan != 4) {
+          printf("\nTekan Enter untuk melanjutkan...");
+          getchar();
+        }    
     } while (pilihan != 4);
 
     return 0;
